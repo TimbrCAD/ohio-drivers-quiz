@@ -1,0 +1,9 @@
+{
+  "name": "Ohio Drivers Knowledge Practice",
+  "short_name": "OH Drivers",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f3eee4",
+  "theme_color": "#c05612",
+  "description": "Practice quiz from the Ohio Driver Manual"
+}
