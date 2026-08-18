@@ -11,13 +11,246 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <title>Ohio Drivers Knowledge Practice</title>
+<style>
+:root {
+  --paper: #f3eee4;
+  --paper-2: #e8e0d2;
+  --card: #fffaf2;
+  --ink: #1c1710;
+  --ink-soft: #4a4338;
+  --muted: #6d6458;
+  --line: #d9cfc0;
+  --gold: #c05612;
+  --gold-deep: #9a3412;
+  --gold-soft: #f3d5b5;
+  --ok: #0f6b3c;
+  --ok-bg: #e5f6ec;
+  --bad: #b42318;
+  --bad-bg: #fde8e6;
+  --shadow: 0 10px 30px rgba(50, 32, 12, 0.08);
+  --radius: 18px;
+  --focus: 0 0 0 3px rgba(192, 86, 18, 0.35);
+}
+html[data-theme="dark"] {
+  --paper: #161310;
+  --paper-2: #221d18;
+  --card: #241f1a;
+  --ink: #f4eadc;
+  --ink-soft: #d4c7b4;
+  --muted: #a89882;
+  --line: #3a322a;
+  --gold: #f0b429;
+  --gold-deep: #f6c453;
+  --gold-soft: #3d2e16;
+  --ok: #4ade80;
+  --ok-bg: #163022;
+  --bad: #fca5a5;
+  --bad-bg: #3a1c1a;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --focus: 0 0 0 3px rgba(240, 180, 41, 0.4);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  background:
+    radial-gradient(1200px 500px at 10% -10%, rgba(192,86,18,0.08), transparent 50%),
+    radial-gradient(900px 400px at 110% 0%, rgba(15,107,60,0.06), transparent 45%),
+    var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 20px 16px 48px; }
+header.app {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; margin-bottom: 18px;
+}
+.brand h1 {
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+  font-size: 1.55rem; line-height: 1.2; margin: 0 0 4px;
+  letter-spacing: -0.02em;
+}
+.brand p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+.tools { display: flex; gap: 8px; align-items: center; }
+.icon-btn {
+  border: 1px solid var(--line); background: var(--card); color: var(--ink);
+  border-radius: 999px; padding: 8px 12px; cursor: pointer; font-size: 0.85rem;
+  box-shadow: var(--shadow);
+}
+.icon-btn:hover { border-color: var(--gold); }
+.icon-btn:focus-visible { outline: none; box-shadow: var(--focus); }
+.progress-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 14px 16px; box-shadow: var(--shadow); margin-bottom: 16px;
+}
+.progress-top { display: flex; justify-content: space-between; gap: 10px; font-size: 0.92rem; }
+.progress-top strong { color: var(--gold-deep); }
+.bar {
+  height: 10px; background: var(--paper-2); border-radius: 999px; overflow: hidden;
+  margin-top: 8px;
+}
+.bar > span {
+  display: block; height: 100%; width: 0; background: linear-gradient(90deg, #c05612, #e08a2c);
+  border-radius: 999px; transition: width 0.35s ease;
+}
+html[data-theme="dark"] .bar > span { background: linear-gradient(90deg, #c05612, #f0b429); }
+.card {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px 20px 20px; box-shadow: var(--shadow);
+}
+.kicker {
+  display: inline-block; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--gold-deep); font-weight: 700; margin-bottom: 8px;
+}
+h2 { font-family: Georgia, Palatino, serif; font-size: 1.35rem; margin: 0 0 10px; line-height: 1.3; }
+.lede { color: var(--ink-soft); margin: 0 0 16px; }
+.bullets { margin: 0 0 18px; padding-left: 1.15rem; color: var(--ink-soft); }
+.bullets li { margin: 0.35rem 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn {
+  appearance: none; border: 0; cursor: pointer; border-radius: 12px;
+  padding: 13px 18px; font-size: 1rem; font-weight: 650; letter-spacing: 0.01em;
+  min-height: 48px;
+}
+.btn:focus-visible { outline: none; box-shadow: var(--focus); }
+.btn-primary { background: var(--gold); color: #fffaf2; }
+html[data-theme="dark"] .btn-primary { color: #1c1710; }
+.btn-primary:hover { filter: brightness(1.05); }
+.btn-ghost {
+  background: transparent; color: var(--ink); border: 1px solid var(--line);
+}
+.btn-ghost:hover { border-color: var(--gold); }
+.btn-danger { background: var(--bad-bg); color: var(--bad); }
+.meta-row {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+  margin-bottom: 8px; color: var(--muted); font-size: 0.88rem;
+}
+.q-text {
+  font-size: 1.18rem; font-weight: 650; line-height: 1.4; margin: 0 0 16px;
+}
+.choices { display: grid; gap: 10px; }
+.choice {
+  width: 100%; text-align: left; border: 1.5px solid var(--line); background: var(--card);
+  color: var(--ink); border-radius: 14px; padding: 12px 12px; cursor: pointer;
+  display: flex; gap: 12px; align-items: flex-start; min-height: 52px; font-size: 1rem;
+}
+.choice:hover:not(:disabled) { border-color: var(--gold); background: var(--gold-soft); }
+.choice:focus-visible { outline: none; box-shadow: var(--focus); }
+.choice:disabled { cursor: default; }
+.key {
+  flex: 0 0 28px; width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center;
+  background: var(--paper-2); font-weight: 700; font-size: 0.85rem; margin-top: 1px;
+}
+.choice.is-correct { border-color: var(--ok); background: var(--ok-bg); }
+.choice.is-wrong { border-color: var(--bad); background: var(--bad-bg); }
+.choice.is-correct .key { background: var(--ok); color: #fff; }
+.choice.is-wrong .key { background: var(--bad); color: #fff; }
+.feedback {
+  margin-top: 14px; border-radius: 14px; padding: 12px 14px; border: 1px solid var(--line);
+}
+.feedback.ok { background: var(--ok-bg); border-color: #9ad4b2; }
+.feedback.bad { background: var(--bad-bg); border-color: #f0b4ae; }
+.feedback strong { display: block; margin-bottom: 4px; }
+.hidden { display: none !important; }
+.score-big {
+  font-family: Georgia, Palatino, serif; font-size: 2.4rem; margin: 4px 0 6px;
+}
+.miss-list { margin: 8px 0 16px; padding: 0; list-style: none; }
+.miss-list li {
+  padding: 8px 0; border-bottom: 1px solid var(--line); color: var(--ink-soft); font-size: 0.95rem;
+}
+.note { font-size: 0.86rem; color: var(--muted); margin-top: 14px; }
+kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78em; border: 1px solid var(--line); border-bottom-width: 2px;
+  border-radius: 5px; padding: 0 5px; background: var(--paper);
+}
+@media (max-width: 560px) {
+  .brand h1 { font-size: 1.22rem; }
+  .brand p { font-size: 0.82rem; }
+  .q-text { font-size: 1.12rem; }
+  .wrap { padding: 12px 12px 28px; }
+  .card { padding: 16px 14px 18px; }
+  header.app { align-items: center; }
+  .choice { padding: 14px 12px; min-height: 56px; font-size: 1.02rem; }
+  .btn { width: 100%; justify-content: center; }
+  .actions { flex-direction: column; }
+  #next-btn { position: sticky; bottom: calc(10px + env(safe-area-inset-bottom)); }
+  .note kbd { display: none; }
+  .note::after { content: " Progress saves on this phone."; }
+}
+</style>
 </head>
 <body>
-<p>Loading Ohio Drivers quiz&hellip; If this stays, open the jsDelivr link.</p>
+<div class="wrap">
+  <header class="app">
+    <div class="brand">
+      <h1>Ohio Drivers Knowledge Practice</h1>
+      <p>Study tool from the Ohio Driver Manual — not the official BMV test</p>
+    </div>
+    <div class="tools">
+      <button type="button" class="icon-btn" id="theme-btn">Dark</button>
+    </div>
+  </header>
+  <div class="progress-card">
+    <div class="progress-top">
+      <span><strong id="mastered-count">0</strong> / <span id="total-count">0</span> solid</span>
+      <span id="progress-sub">No questions answered yet</span>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="progress-fill"></span></div>
+  </div>
+  <section id="screen-start" class="card">
+    <span class="kicker">Practice quiz</span>
+    <h2>Learn it so it sticks</h2>
+    <p class="lede">40-question official knowledge test, 75% to pass. This practice set covers Sections 2–10 of the March 2026 Ohio Driver Manual — speed limits, right-of-way, school buses, alcohol, insurance, and sharing the road.</p>
+    <ul class="bullets">
+      <li><strong>Misses come back fast</strong> (within about the next 3–6 questions) so you can fix them.</li>
+      <li><strong>Rights come back later</strong> so a lucky guess does not count as mastery.</li>
+      <li>A question is <strong>solid</strong> only after <strong>3 correct answers in a row</strong>, on separate appearances. Even then it may resurface so it stays warm.</li>
+    </ul>
+    <div class="actions">
+      <button type="button" class="btn btn-primary" id="start-btn">Start quiz</button>
+      <button type="button" class="btn btn-ghost hidden" id="resume-btn">Resume (20 questions)</button>
+      <button type="button" class="btn btn-ghost hidden" id="weak-btn">Practice weak spots</button>
+      <button type="button" class="btn btn-ghost" id="full-btn">Full study</button>
+      <button type="button" class="btn btn-danger hidden" id="reset-btn">Reset progress</button>
+    </div>
+    <p class="note">On a phone: tap an answer, then Next. Progress is saved on this device. On a computer, <kbd>1</kbd>–<kbd>4</kbd> and <kbd>Enter</kbd> also work. Default session is 20 questions, like a mini test. On iPhone, tap Share then Add to Home Screen if you want an icon.</p>
+  </section>
+  <section id="screen-quiz" class="card hidden">
+    <div class="meta-row">
+      <span id="q-pos">Question 1</span>
+      <span id="q-section"></span>
+    </div>
+    <p class="q-text" id="q-text"></p>
+    <div class="choices" id="choices"></div>
+    <div id="feedback" class="feedback hidden"></div>
+    <div id="next-wrap" class="actions hidden" style="margin-top:14px">
+      <button type="button" class="btn btn-primary" id="next-btn">Next</button>
+    </div>
+  </section>
+  <section id="screen-results" class="card hidden">
+    <span class="kicker">Session complete</span>
+    <div class="score-big" id="score-big">0 / 20</div>
+    <p class="lede" id="score-sub"></p>
+    <h2>Missed topics</h2>
+    <ul class="miss-list" id="miss-topics"></ul>
+    <div class="actions">
+      <button type="button" class="btn btn-primary hidden" id="keep-misses">Keep practicing misses</button>
+      <button type="button" class="btn btn-ghost" id="again-btn">Another 20</button>
+      <button type="button" class="btn btn-ghost" id="home-btn">Home</button>
+    </div>
+  </section>
+</div>
 <script src="questions-a.js"></script>
 <script src="questions-b.js"></script>
-<script>
-const QUESTIONS = QUESTIONS_A.concat(QUESTIONS_B);
-</script>
+<script src="app.js"></script>
 </body>
 </html>
